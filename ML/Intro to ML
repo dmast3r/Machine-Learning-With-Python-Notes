@@ -1,0 +1,60 @@
+Machine Learning can be classified into four types:-
+Supervise, Semi-Supervised, Unsupervised, Reinforcement.
+
+In Machine Learning an attribute is a data type (e.g., “Mileage”), while a feature has several meanings depending on the
+context, but generally means an attribute plus its value (e.g., “Mileage = 15,000”). Many people use the words attribute and
+feature interchangeably, though.
+
+Supervised Learning Algorithms:-
+1. Linear Regression
+2. K-Nearest Neighbours
+3. Nueral Networks
+4. Decision Trees and Random Forests
+5. Support Vector Machine
+
+Unspurvised Learning Algorithms:-
+-> Clustering
+k-Means
+Hierarchical Cluster Analysis (HCA)
+Expectation Maximization
+-> Visualization and dimensionality reduction
+Principal Component Analysis (PCA)
+Kernel PCA
+Locally-Linear Embedding
+ (LLE)
+t-distributed Stochastic Neighbor Embedding (t-SNE)
+-> Association rule learning
+Apriori
+Eclat
+
+What is dimensionality reduction?
+to simplify the data without losing too
+much information. One way to do this is to merge several correlated features into one. For example, a
+car’s mileage may be very correlated with its age, so the dimensionality reduction algorithm will merge
+them into one feature that represents the car’s wear and tear. This is called feature extraction.
+
+What is Anamoly Detection?
+Yet another important unsupervised task is anomaly detection — for example, detecting unusual credit
+card transactions to prevent fraud, catching manufacturing defects, or automatically removing outliers
+from a dataset before feeding it to another learning algorithm. The system is trained with normal
+instances, and when it sees a new instance it can tell whether it looks like a normal one or whether it is
+likely an anomaly
+
+What is Association Rule Learning?
+Ans: To dig into
+large amounts of data and discover interesting relations between attributes. For example, suppose you
+own a supermarket. Running an association rule on your sales logs may reveal that people who purchase
+barbecue sauce and potato chips also tend to buy steak. Thus, you may want to place these items close to
+each other.
+
+Q What is Semi Supervised Learning?
+Ans: Semi Supervised learning can be thought of as combination of both supervised as well as unsupervised learning. The learning algorithm first clusters the data and then you put label on each cluster. Think of uploading your photos to a ML bot, the bot first clusters the photos of each of your friend and then you put a label on them.
+
+Q What is Reinforcement Learning?
+Ans: RL consists of an agent(our ML bot) that takes actions based on it's learning, the result of the action has reward or penality depending on whether the result was favourable or not. The agent then choses his action based on his learning and it is called as policy. 
+
+Q. What is 'No Free Launch Theorem'?
+Ans:
+
+
+

@@ -1,0 +1,591 @@
+---------------------- Introduction to Pandas Data Structures -----------------
+
+Pandas introduces addition Data Structres to Python, these are based on numpy and can hence be passed to numpy functions such as np.square
+1. Series : Series takes a list as it's input and put a label on each of the value, by default the labels are 0, 1, ..... len(list) - 1. An optional argument can be given which is a list that defines a label for each value in the first list.
+for ex-:
+s = pd.Series([7, 'Heisenberg', 3.14, -1789710578, 'Happy Eating!'])
+print(s)
+would simply print
+0                7
+1       Heisenberg
+2             3.14
+3      -1789710578
+4    Happy Eating!
+dtype: object
+
+however 
+s = pd.Series([7, 'Heisenberg', 3.14, -1789710578, 'Happy Eating!'],
+              index=['A', 'Z', 'C', 'Y', 'E'])
+print(s)
+would print
+A                7
+Z       Heisenberg
+C             3.14
+Y      -1789710578
+E    Happy Eating!
+dtype: object
+
+The Series constructor can convert a dictonary as well, using the keys of the dictionary as its index.
+
+d = {'Chicago': 1000, 'New York': 1300, 'Portland': 900, 'San Francisco': 1100,
+     'Austin': 450, 'Boston': None}
+cities = pd.Series(d)
+cities
+Austin            450
+Boston            NaN
+Chicago          1000
+New York         1300
+Portland          900
+San Francisco    1100
+dtype: float64
+You can use the index to select specific items from the Series ...
+
+cities['Chicago']
+1000.0
+cities[['Chicago', 'Portland', 'San Francisco']]
+Chicago          1000
+Portland          900
+San Francisco    1100
+dtype: float64
+Or you can use boolean indexing for selection.
+
+cities[cities < 1000]
+Austin      450
+Portland    900
+dtype: float64
+That last one might be a little weird, so let's make it more clear - cities < 1000 returns a Series of True/False values, which we then pass to our Series cities, returning the corresponding True items.
+
+less_than_1000 = cities < 1000
+print(less_than_1000)
+print('\n')
+print(cities[less_than_1000])
+Austin            True
+Boston           False
+Chicago          False
+New York         False
+Portland          True
+San Francisco    False
+dtype: bool
+
+
+Austin      450
+Portland    900
+dtype: float64
+You can also change the values in a Series on the fly.
+
+# changing based on the index
+print('Old value:', cities['Chicago'])
+cities['Chicago'] = 1400
+print('New value:', cities['Chicago'])
+('Old value:', 1000.0)
+('New value:', 1400.0)
+# changing values using boolean logic
+print(cities[cities < 1000])
+print('\n')
+cities[cities < 1000] = 750
+
+print cities[cities < 1000]
+Austin      450
+Portland    900
+dtype: float64
+
+
+Austin      750
+Portland    750
+dtype: float64
+What if you aren't sure whether an item is in the Series? You can check using idiomatic Python.
+
+print('Seattle' in cities)
+print('San Francisco' in cities)
+False
+True
+Mathematical operations can be done using scalars and functions.
+
+# divide city values by 3
+cities / 3
+Austin           250.000000
+Boston                  NaN
+Chicago          466.666667
+New York         433.333333
+Portland         250.000000
+San Francisco    366.666667
+dtype: float64
+# square city values
+np.square(cities)
+Austin            562500
+Boston               NaN
+Chicago          1960000
+New York         1690000
+Portland          562500
+San Francisco    1210000
+dtype: float64
+You can add two Series together, which returns a union of the two Series with the addition occurring on the shared index values. Values on either Series that did not have a shared index will produce a NULL/NaN (not a number).
+
+print(cities[['Chicago', 'New York', 'Portland']])
+print('\n')
+print(cities[['Austin', 'New York']])
+print('\n')
+print(cities[['Chicago', 'New York', 'Portland']] + cities[['Austin', 'New York']])
+Chicago     1400
+New York    1300
+Portland     750
+dtype: float64
+
+
+Austin       750
+New York    1300
+dtype: float64
+
+
+Austin       NaN
+Chicago      NaN
+New York    2600
+Portland     NaN
+dtype: float64
+Notice that because Austin, Chicago, and Portland were not found in both Series, they were returned with NULL/NaN values.
+
+NULL checking can be performed with isnull and notnull.
+
+# returns a boolean series indicating which values aren't NULL
+cities.notnull()
+Austin            True
+Boston           False
+Chicago           True
+New York          True
+Portland          True
+San Francisco     True
+dtype: bool
+# use boolean logic to grab the NULL cities
+print(cities.isnull())
+print('\n')
+print(cities[cities.isnull()])
+Austin           False
+Boston            True
+Chicago          False
+New York         False
+Portland         False
+San Francisco    False
+dtype: bool
+
+
+Boston   NaN
+dtype: float64
+
+
+2. DataFrame
+A DataFrame is a tabular representation of data just like as done in Excel or SQL. Use pandas.DataFrame function for this. The input to DataFrame is a dictionary, this Dictionary contains name of columns of the table as keys and value of each key is a list, this list contains the values in each row for that column, any missing value is displayed as NaN.
+By default the columns will be sorted alphabatically, however we can specify the order by an optional argument, this optional argument is a list that contains the name of the columns to be displayed in that order. If a wrong column name will be used than it will be treated as column with all missing values and thus the all values for this column will be NaN.
+We can access all the values under a column with dictionary like syntax. An example to understand all of these.
+
+
+data = {'year': [2010, 2011, 2012, 2011, 2012, 2010, 2011, 2012],
+        'team': ['Bears', 'Bears', 'Bears', 'Packers', 'Packers', 'Lions', 'Lions', 'Lions'],
+        'wins': [11, 8, 10, 15, 11, 6, 10, 4],
+        'losses': [5, 8, 6, 1, 5, 10, 6, 12]}
+
+football = pd.DataFrame(data, columns=['year', 'team', 'wins', 'losses'])
+football
+
+	year	team	wins	losses
+0	2010	Bears	11	5
+1	2011	Bears	8	8
+2	2012	Bears	10	6
+3	2011	Packers	15	1
+4	2012	Packers	11	5
+5	2010	Lions	6	10
+6	2011	Lions	10	6
+7	2012	Lions	4	12
+
+to access all the values under 'team' we can do
+football['team']
+
+0      Bears
+1      Bears
+2      Bears
+3    Packers
+4    Packers
+5      Lions
+6      LionsQ
+7      Lions
+Name: team, dtype: object
+
+
+Above we see that index are choosen starting from 0, 1, 2, .... . We can specify to choose a different index just like as we can do in Series.
+data = {'year': [2010, 2011, 2012, 2011, 2012, 2010, 2011, 2012],
+        'team': ['Bears', 'Bears', 'Bears', 'Packers', 'Packers', 'Lions', 'Lions', 'Lions'],
+        'wins': [11, 8, 10, 15, 11, 6, 10, 4],
+        'losses': [5, 8, 6, 1, 5, 10, 6, 12]}
+
+football = pd.DataFrame(data, columns=['year', 'team', 'wins', 'losses'], index=['one', 'two', 'three', 'four', 'five','six', 'seven'
+                                                                                , 'eight'])
+football
+
+	year	team	wins	losses
+one	2010	Bears	11	5
+two	2011	Bears	8	8
+three	2012	Bears	10	6
+four	2011	Packers	15	1
+five	2012	Packers	11	5
+six	2010	Lions	6	10
+seven	2011	Lions	10	6
+eight	2012	Lions	4	12
+
+Now in order to select a particular row(or tuple as we say in SQL) we can do the same thing as in Series
+football.loc['one']
+and the output is
+year       2010
+team      Bears
+wins         11
+losses        5
+Name: one, dtype: object
+
+
+** read_csv function
+This is used for reading a comma separated file and returns a dataframe object and can thus display csv into a nice tabular format.
+
+the basic syntax is:-
+pandas.read_csv('full_csv_file_path.csv')
+
+we can provide additional options like:-
+deliminator:- if the data is not separated by csv but by some other character.
+skip:- specify the number of rows to skip, some times we include metadata at the top along with the csv data, by default read_csv will interpret it as column name, we thus want to skip the rows contatining the metadata
+header=None :- if csv contains no header(column names) and just data, by default the first row is inferred as column names, header if set to None, choses integer index starting from 0 to column - 1.
+names :- [#names here]:- if header set to none than specify your own column names. 
+nrows :- read only the specified number of rows.
+
+---> The describe method:
+	calling the describe method on the dataframe returned from the read_csv function can be used to see the summary of the data. It provides for each column fields like count, mean, standard deviation, max, min, 25%, 50% and 75% percentile. The 25%, 50%, and 75% rows show the corresponding
+percentiles: a percentile indicates the value below which a given percentage of observations in a group
+of observations falls.
+
+----> the info method:
+	The info() method is useful to get a quick description of the data, in particular the total number of rows,
+and each attribute’s type and number of non-null values.
+
+----> dataFrame.iloc[]
+Pandas provides a suite of methods in order to get purely integer based indexing. The semantics follow closely python and numpy slicing. These are 0-based indexing. When slicing, the start bounds is included, while the upper bound is excluded. Trying to use a non-integer, even a valid label will raise an IndexError.
+
+The .iloc attribute is the primary access method. The following are valid inputs:
+
+An integer e.g. 5
+A list or array of integers [4, 3, 0]
+A slice object with ints 1:7
+A boolean array
+A callable,
+
+for ex:-
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+df = pd.read_csv('FL_insurance_sample.csv', nrows=10)
+
+now all of these are legal:
+df.iloc[0:11]
+df.iloc[2]
+df.iloc[[2,5,7]]
+
+************ More on loc, iloc and the difference between them ********************
+1. We can use both loc and iloc to specify both the rows as well as the columns to select.
+The syntax is :-
+df.loc[# specify rows here, # specify columns here]
+
+now there can be various ways to specify rows and columns. These ways will also change depending on whether we are choosing iloc or loc.
+
+2. loc is used for choosing by labels.
+in: 
+import pandas as pd
+df = pd.read_csv('infinity_stone.csv')
+df
+
+out:
+	Name 			Place 			Appeared in
+0	Space Stone		Asgard/With Loki	Capatain America - First Avenger
+1	Reality Stone		With Collector		Thor 1
+2	Power Stone		Xandar/With Nova Cops	Gaurdians of the Galaxy Vol 1
+3	Mind Stone		Earth/With Vision	Avengers : Age of Ultron
+4	Time Stone		Earth/With Dr. Strange	Doctor Strange 1
+5 	Soul Stone		Earth/Wakanda		Black Panther 1
+
+in:
+df.loc[0, 'Name']
+out:
+Space Stone
+
+in:
+df.loc[[0,2,5], ['Name', 'Place']]
+	Name 			Place 
+0	Space Stone		Asgard/With Loki
+2	Power Stone		Xandar/With Nova Cops
+5 	Soul Stone		Earth/Wakanda
+
+in:
+df.loc[:, :]
+
+out:
+	Name 			Place 			Appeared in
+0	Space Stone		Asgard/With Loki	Capatain America - First Avenger
+1	Reality Stone		With Collector		Thor 1
+2	Power Stone		Xandar/With Nova Cops	Gaurdians of the Galaxy Vol 1
+3	Mind Stone		Earth/With Vision	Avengers : Age of Ultron
+4	Time Stone		Earth/With Dr. Strange	Doctor Strange 1
+5 	Soul Stone		Earth/Wakanda		Black Panther 1
+
+in:
+df.loc[0:2, :'Appearde in']
+out:
+	Name 			Place 			Appeared in
+0	Space Stone		Asgard/With Loki	Capatain America - First Avenger
+1	Reality Stone		With Collector		Thor 1
+2	Power Stone		Xandar/With Nova Cops	Gaurdians of the Galaxy Vol 1
+
+-----> So, to summerise:
+1. loc is based on labels, it will raise an exception 'Key Not Found' if wrong label is asked to query
+2. Unlike Python list the upper limit is not exclusive ie df.loc[start:end] will fetch result inclusive of both start as well as end.
+3. If either column or row is not specified then loc will return all rows/columns(whatever is not specified). This holds true for iloc as well
+4. We can choose to specify only rows with a syntax like this:- df.loc[#list or label] and loc will implicitly assume that it has to return all columns but only the specified rows. Again this holds true for iloc as well(with a minor difference in how the rows are specified).
+5. Ultimately we can also pass a Boolean Array to both loc and iloc. Each value in the boolean array tells if the row or column with that index number be included in the result or not. If len(boolean_array) < total_rows/total_columns then all the indices in the range len(boolean_array).....total_rows/total_columns are implicitly assumed to be false.
+For ex:-
+in:
+df.loc[[True, True, False], [True]]
+out:
+	Name
+0	Space Stone
+1	Reality Stone
+
+------> iloc is based on indices:
+To illustrate the differences between the three methods, consider the following Series:
+
+>>> s = pd.Series(np.nan, index=[49,48,47,46,45, 1, 2, 3, 4, 5])
+>>> s
+49   NaN
+48   NaN
+47   NaN
+46   NaN
+45   NaN
+1    NaN
+2    NaN
+3    NaN
+4    NaN
+5    NaN
+Then s.iloc[:3] returns the first 3 rows (since it looks at the position) and s.loc[:3] returns the first 8 rows (since it looks at the labels):
+
+>>> s.iloc[:3] # slice the first three rows
+49   NaN
+48   NaN
+47   NaN
+
+>>> s.loc[:3] # slice up to and including label 3
+49   NaN
+48   NaN
+47   NaN
+46   NaN
+45   NaN
+1    NaN
+2    NaN
+3    NaN
+
+-------------------------> Note : Many operations can be applied directly on the DataFrame object to get the same result instead of using iloc and loc but the syntax can be hard to remember. For ex:-
+
+in:
+df[['Name', 'Place']]
+
+out:
+	Name 			Place
+0	Space Stone		Asgard/With Loki
+1	Reality Stone		With Collector
+2	Power Stone		Xandar/With Nova Cops
+3	Mind Stone		Earth/With Vision
+4	Time Stone		Earth/With Dr. Strange
+5 	Soul Stone		Earth/Wakanda
+
+in
+df[0:6] # is index based and works on rows, i.e. it is similar to iloc with row indices
+
+out:
+	Name 			Place 			Appeared in
+0	Space Stone		Asgard/With Loki	Capatain America - First Avenger
+1	Reality Stone		With Collector		Thor 1
+2	Power Stone		Xandar/With Nova Cops	Gaurdians of the Galaxy Vol 1
+3	Mind Stone		Earth/With Vision	Avengers : Age of Ultron
+4	Time Stone		Earth/With Dr. Strange	Doctor Strange 1
+5 	Soul Stone		Earth/Wakanda		Black Panther 1
+
+
+********* map, apply and applymap
+
+1. map
+-----> Map values of Series using input correspondence (which can be a dict, Series, or function)
+
+Parameters:	
+arg : function, dict, or Series
+
+na_action : {None, ‘ignore’}
+
+If ‘ignore’, propagate NA values, without passing them to the mapping function
+
+Returns:	
+y : Series
+
+same index as caller
+
+
+--------> using map with x.map(y), x and y both are series. In this case it maps the output(value against index of each row) of x with the input(index of each row) of y. If the input of x is not same as y or if the size of input of x is not same as that of size of y then NaN is returned in all rows, number of rows returned always equals to number of rows in the calling Series. For example:-
+
+in:
+x = pd.Series([1,2,3,4], index=['Dr Strange', 'Wanda Maximof', 'Vision', 'Ironman'])
+y = pd.Series(['Dr Strange', 'Wanda Maximof', 'Vision', 'Ironman'], index=[1,2,3,4])
+x.map(y)
+
+out:
+Dr Strange          Dr Strange
+Wanda Maximof    Wanda Maximof
+Vision                  Vision
+Ironman                Ironman
+
+---------> using Series.map(dictionary), the values of Series are replaced by key-value pair specified in the dictionary, if a value in the Series is missing as a Key in the dictionary then NULL is set against it. ex-:
+
+
+in:
+import pandas as pd
+train = pd.read_csv('http://bit.ly/kaggletrain')
+train.head()
+
+out:
+
+PassengerId	Survived	Pclass	Name	Sex	Age	SibSp	Parch	Ticket	Fare	Cabin	Embarked
+0	1	0	3	Braund, Mr. Owen Harris	male	22.0	1	0	A/5 21171	7.2500	NaN	S
+1	2	1	1	Cumings, Mrs. John Bradley (Florence Briggs Th...	female	38.0	1	0	PC 17599	71.2833	C85	C
+2	3	1	3	Heikkinen, Miss. Laina	female	26.0	0	0	STON/O2. 3101282	7.9250	NaN	S
+3	4	1	1	Futrelle, Mrs. Jacques Heath (Lily May Peel)	female	35.0	1	0	113803	53.1000	C123	S
+4	5	0	3	Allen, Mr. William Henry	male	35.0	0	0	373450	8.0500	NaN	S
+
+
+in:
+train['Sex_num'] = train.Sex.map({'female' : 0, 'male' : 1}) # train['Sex_num'] will introduce a new column(all columns are basically Series) in the 									Dataframe, A DF is thus a collection of Series.
+train.loc[0:4, ['Sex', 'Sex_num']]
+
+out:
+	Sex	Sex_num
+0	male	1
+1	female	0
+2	female	0
+3	female	0
+4	male	1
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+2. apply:
+apply applies a function on a Series or a DataFrame and the ouptut is also a Series or DataFrame which is the result of application of function on each element of the Series/DataFrame.
+If applied to DataFrame we can also specify the axis(ie row or column, 0 denotes row(ie result will be column based, see example below for more clarification)) the function on. 
+
+
+---> apply on Series
+in:
+train['Name_length'] = train.Name.apply(len)
+train.loc[0:4, ['Name', 'Name_length']]
+
+out:
+
+	Name						Name_length
+0	Braund, Mr. Owen Harris					23
+1	Cumings, Mrs. John Bradley (Florence Briggs Th...	51
+2	Heikkinen, Miss. Laina					22
+3	Futrelle, Mrs. Jacques Heath (Lily May Peel)		44
+4	Allen, Mr. William Henry				24
+
+
+---> apply on DataFrame
+
+in:
+drinks = pd.read_csv('http://bit.ly/drinksbycountry')
+drinks.head()
+
+out:
+
+	country	beer_servings	spirit_servings	wine_servings	total_litres_of_pure_alcohol	continent
+0	Afghanistan	0	0	0	0.0	Asia
+1	Albania	89	132	54	4.9	Europe
+2	Algeria	25	0	14	0.7	Africa
+3	Andorra	245	138	312	12.4	Europe
+4	Angola	217	57	45	5.9	Africa	
+
+---> apply on axis = 0
+in:
+drinks.loc[:, 'beer_servings' : 'wine_servings'].apply(max, axis=0)
+
+out:
+beer_servings      376
+spirit_servings    438
+wine_servings      370
+dtype: int64
+
+----> apply on axis = 1
+in:
+drinks.loc[:, 'beer_servings' : 'wine_servings'].apply(max, axis=1)
+
+out:
+0        0
+1      132
+2       25
+3      312
+4      217
+5      128
+6      221
+7      179
+9      279
+10      46
+11     176
+12      63
+13       0
+8      261
+14     173
+15     373
+16     295
+17     263
+18      34
+19      23
+20     167
+21     173
+22     173
+23     245
+24      31
+25     252
+26      25
+27      88
+28      37
+29     144
+      ... 
+163    178
+164     90
+165    186
+166    280
+167     35
+168     15
+169    258
+170    106
+171      4
+172     36
+173     36
+174    197
+175     51
+176     51
+177     71
+178     41
+179     45
+180    237
+181    135
+182    219
+183     36
+184    249
+185    220
+186    101
+187     21
+188    333
+189    111
+190      6
+191     32
+192     64
+Length: 193, dtype: int64
+
+

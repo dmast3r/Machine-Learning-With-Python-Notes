@@ -1,0 +1,81 @@
+importing numpy:-
+this way is preffered :- import numpy as np
+
+1. ndarray
+* An ndarray is a (usually fixed-size) multidimensional container of items of the same type and size. The number
+of dimensions and items in an array is defined by its shape, which is a tuple of N positive integers that specify
+the sizes of each dimension. The type of items in the array is specified by a separate data-type object (dtype), one of
+which is associated with each ndarray.
+As with other container objects in Python, the contents of an ndarray can be accessed and modified by indexing or
+slicing the array (using, for example, N integers), and via the methods and attributes of the ndarray
+* ndarray is a multi dimensional array.
+* to create an ndarray:-
+np.array([// array goes here])
+ex:-
+oned = np.array([1, 2, 3, 4, 5])
+twod = np.array([[1, 2, 3], [4, 5, 6]])
+
+similarly we can also pass a tuple to the array function, ie 
+np.array((1, 2, 3)), np.array(((1, 2, 3), (4, 5, 6))), np.array([(1, 2, 3), (4, 5, 6)]) 
+all are correct.
+
+Note -> since ndarray is an array it will elements of the same datatype, thus one type will be lower type will be promoted to higher if used together
+as elements. ex-:
+ip : np.array([1, 2.3])
+op: array([ 1. ,  2.3])
+
+* ndarray have a shape - the order of the array and datatype of elements, the first one is a tuple and the later is a dtype object.
+twod.shape
+op : (2, 3)
+twod.dtype
+op : dtype('int64')
+
+* In addition to np.array, there are a number of other functions for creating new arrays.
+As examples- 
+-> zeros and ones create arrays of 0’s or 1’s, respectively, with a given length
+or shape. 
+Empty creates an array without initializing its values to any particular value.
+
+To create a higher dimensional array with these methods, pass a tuple for the shape:
+In [23]: np.zeros(10)
+Out[23]: array([ 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
+In [24]: np.zeros((3, 6))
+Out[24]:
+array([[ 0., 0., 0., 0., 0., 0.],
+[ 0., 0., 0., 0., 0., 0.],
+[ 0., 0., 0., 0., 0., 0.]])
+In [25]: np.empty((2, 3, 2))
+Out[25]:
+array([[[ 4.94065646e-324, 4.94065646e-324],
+[ 3.87491056e-297, 2.46845796e-130],
+[ 4.94065646e-324, 4.94065646e-324]],
+[[ 1.90723115e+083, 5.73293533e-053],
+[ -2.33568637e+124, -6.70608105e-012],
+[ 4.42786966e+160, 1.27100354e+025]]])
+
+-> arange is an array-valued version of the built-in Python range function:
+In [26]: np.arange(15)
+Out[26]: array([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+
+-> Function Description
+--> array : Convert input data (list, tuple, array, or other sequence type) to an ndarray either by
+inferring a dtype or explicitly specifying a dtype. Copies the input data by default.
+--> asarray : Convert input to ndarray, but do not copy if the input is already an ndarray
+--> arange : Like the built-in range but returns an ndarray instead of a list.
+--> ones, ones_like Produce an array of all 1’s with the given shape and dtype. ones_like takes another
+	  array and produces a ones array of the same shape and dtype. By default ones will generate an ndarray of 'float64', we can specify the desired type as an optional argument.
+--> zeros, zeros_like Like ones and ones_like but producing arrays of 0’s instead
+
+
+* Accessing elements of ndarray
+Elements can be accessed using indexing or slicing as with Python lists. For an ndrray with more than one elem, the syntax is:-
+array[index1, index2, ....indexn]
+index1, index2, .... index1 are indices in first, second and nth dimension respectively.
+ex:-
+array = np.array([[[1, 2, 3], [4,5,6]], [[7,8,9],[10,11,12]]])
+array[0, 1, 1]
+->output = 5
+
+* Mathamatical Operations on ndarray
+
+
